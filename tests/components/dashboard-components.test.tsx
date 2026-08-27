@@ -56,6 +56,9 @@ describe("dashboard components", () => {
     expect(container.querySelector("img")).toHaveAttribute("src", "/assets/ocular-eye-v3.webp");
     expect(screen.getByText("92")).toBeInTheDocument();
     expect(screen.getByText("/ 100")).toBeInTheDocument();
+    const scorePod = screen.getByLabelText("Comfort score 92 out of 100, Mostly favourable");
+    expect(scorePod).not.toHaveTextContent("Mostly favourable");
+    expect(scorePod.querySelector(".score-pod__signal svg")).toBeInTheDocument();
   });
 
   it("maps comfort boundaries to restrained semantic eye states", () => {
