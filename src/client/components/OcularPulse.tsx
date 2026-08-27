@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import type { ComfortFactor } from "../../domain/comfort/comfort.types";
-import { getOcularVisualState } from "./ocular-visual-state";
+import { getOcularVisualState, type OcularStateName } from "./ocular-visual-state";
 
 interface OcularPulseProps { score: number; factors: ComfortFactor[]; cityName: string; classification: string }
 
@@ -32,9 +32,9 @@ export function OcularPulse({ score, factors, cityName, classification }: Ocular
           <strong>{score}</strong>
           <small>/ 100</small>
           <i aria-hidden="true"><i /></i>
-          {/* The nearby copy already names the classification. This compact,
-              non-verbal signal keeps the pod informative without repeating it. */}
-          <ComfortSignal state={visualState.name} />
+          {/* The nearby copy already names the classification. A calibrated
+              five-tick scale adds state without introducing another label. */}
+          <ComfortSpectrum state={visualState.name} />
         </div>
       </div>
       <figcaption className="stress-readout">
@@ -45,14 +45,13 @@ export function OcularPulse({ score, factors, cityName, classification }: Ocular
   );
 }
 
-function ComfortSignal({ state }: { state: string }) {
+function ComfortSpectrum({ state }: { state: OcularStateName }) {
+  const activeIndex = { severe: 0, stressed: 1, elevated: 2, watchful: 3, calm: 4 }[state];
   return (
-    <span className="score-pod__signal" data-state={state} aria-hidden="true">
-      <svg viewBox="0 0 40 24" focusable="false">
-        <path className="score-pod__orbit" d="M3 12C8 4 32 4 37 12C32 20 8 20 3 12Z" />
-        <path className="score-pod__wave" d="M7 12c3-5 5 5 8 0s5-5 8 0 5 5 10 0" />
-        <circle cx="20" cy="12" r="2.7" />
-      </svg>
+    <span className="score-pod__spectrum" data-state={state} aria-hidden="true">
+      {Array.from({ length: 5 }, (_, index) => (
+        <i className={index === activeIndex ? "score-pod__tick--active" : undefined} key={index} />
+      ))}
     </span>
   );
 }

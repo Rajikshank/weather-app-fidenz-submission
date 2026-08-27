@@ -58,7 +58,8 @@ describe("dashboard components", () => {
     expect(screen.getByText("/ 100")).toBeInTheDocument();
     const scorePod = screen.getByLabelText("Comfort score 92 out of 100, Mostly favourable");
     expect(scorePod).not.toHaveTextContent("Mostly favourable");
-    expect(scorePod.querySelector(".score-pod__signal svg")).toBeInTheDocument();
+    expect(scorePod.querySelectorAll(".score-pod__spectrum i")).toHaveLength(5);
+    expect(scorePod.querySelectorAll(".score-pod__tick--active")).toHaveLength(1);
   });
 
   it("maps comfort boundaries to restrained semantic eye states", () => {

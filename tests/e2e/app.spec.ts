@@ -164,12 +164,13 @@ test("slow observations show the lightweight sensor loader", async ({ page }) =>
 
 test("eye state changes naturally while the score pod keeps only its sheen", async ({ page }) => {
   await expect(page.locator(".eye-visual")).toHaveAttribute("data-eye-state", "calm");
-  const signal = page.locator(".score-pod__signal");
-  await expect(signal).toBeVisible();
-  const calmColor = await signal.evaluate((element) => getComputedStyle(element).color);
+  const spectrum = page.locator(".score-pod__spectrum");
+  await expect(spectrum).toBeVisible();
+  await expect(spectrum.locator("i")).toHaveCount(5);
+  const calmColor = await spectrum.evaluate((element) => getComputedStyle(element).color);
   await page.getByRole("button", { name: /Dubai/ }).click();
   await expect(page.locator(".eye-visual")).toHaveAttribute("data-eye-state", "severe");
-  const severeColor = await signal.evaluate((element) => getComputedStyle(element).color);
+  const severeColor = await spectrum.evaluate((element) => getComputedStyle(element).color);
   expect(severeColor).not.toBe(calmColor);
 
   const motion = await page.locator(".score-pod").evaluate((element) => ({
@@ -177,7 +178,7 @@ test("eye state changes naturally while the score pod keeps only its sheen", asy
     sheen: getComputedStyle(element, "::after").animationName,
     containsSignal: (() => {
       const pod = element.getBoundingClientRect();
-      const glyph = element.querySelector(".score-pod__signal")?.getBoundingClientRect();
+      const glyph = element.querySelector(".score-pod__spectrum")?.getBoundingClientRect();
       return Boolean(glyph && glyph.left >= pod.left && glyph.right <= pod.right && glyph.top >= pod.top && glyph.bottom <= pod.bottom);
     })(),
   }));

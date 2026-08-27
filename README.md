@@ -1,4 +1,4 @@
-# OcuComfort — Ocular Environmental Comfort Index
+# OcuComfort: Ocular Environmental Comfort Index
 
 OcuComfort translates live weather conditions into an explainable measure of how favourable the outdoor environment may feel to the ocular surface. It combines temperature, relative humidity, and wind speed into a score from 0 to 100, then ranks twelve cities from most to least comfortable.
 
@@ -28,7 +28,7 @@ Scores are calculated by the backend. The browser receives normalized weather ob
 
 - Live OpenWeather observations requested by stable city identifiers
 - Twelve-city ranking with search and reversible sorting
-- Backend-computed, explainable 0–100 comfort score
+- Backend-computed, explainable 0-100 comfort score
 - Five-minute server-side cache with protected HIT/MISS diagnostics
 - Auth0 login, logout, persistent sessions, and independently protected API routes
 - Graceful partial results when one or more upstream requests fail
@@ -75,11 +75,11 @@ The weights and normalization anchors are transparent engineering decisions. The
 
 | Score | Interpretation |
 |---:|---|
-| 85–100 | Favourable |
-| 70–84 | Mostly favourable |
-| 50–69 | Elevated environmental stress |
-| 30–49 | High environmental stress |
-| 0–29 | Very high environmental stress |
+| 85-100 | Favourable |
+| 70-84 | Mostly favourable |
+| 50-69 | Elevated environmental stress |
+| 30-49 | High environmental stress |
+| 0-29 | Very high environmental stress |
 
 ## Architecture
 
@@ -105,7 +105,7 @@ The React application and API deploy together on one Cloudflare Worker origin. T
 
 ### City data
 
-The source dataset contains eight cities. Four additional stable OpenWeather city IDs—Melbourne, New York, Delhi, and Dubai—bring the comparison to twelve. Every record is labelled as `provided` or `supplemental`, so added data is explicit and the original records remain unchanged.
+The source dataset contains eight cities. Four additional stable OpenWeather city IDs (Melbourne, New York, Delhi, and Dubai) bring the comparison to twelve. Every record is labelled as `provided` or `supplemental`, so added data is explicit and the original records remain unchanged.
 
 ### Caching
 
