@@ -1,0 +1,16 @@
+{
+  "List": [
+    { "CityCode": "1248991", "CityName": "Colombo", "Temp": "33.0", "Status": "Clouds", "source": "provided" },
+    { "CityCode": "1850147", "CityName": "Tokyo", "Temp": "8.6", "Status": "Clear", "source": "provided" },
+    { "CityCode": "2644210", "CityName": "Liverpool", "Temp": "16.5", "Status": "Rain", "source": "provided" },
+    { "CityCode": "2988507", "CityName": "Paris", "Temp": "22.4", "Status": "Clear", "source": "provided" },
+    { "CityCode": "2147714", "CityName": "Sydney", "Temp": "27.3", "Status": "Rain", "source": "provided" },
+    { "CityCode": "4930956", "CityName": "Boston", "Temp": "4.2", "Status": "Mist", "source": "provided" },
+    { "CityCode": "1796236", "CityName": "Shanghai", "Temp": "10.1", "Status": "Clouds", "source": "provided" },
+    { "CityCode": "3143244", "CityName": "Oslo", "Temp": "-3.9", "Status": "Clear", "source": "provided" },
+    { "CityCode": "2158177", "CityName": "Melbourne", "source": "supplemental" },
+    { "CityCode": "5128581", "CityName": "New York", "source": "supplemental" },
+    { "CityCode": "1273294", "CityName": "Delhi", "source": "supplemental" },
+    { "CityCode": "292223", "CityName": "Dubai", "source": "supplemental" }
+  ]
+}
