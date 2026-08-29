@@ -33,6 +33,20 @@ describe("baseline Ocular Comfort algorithm", () => {
     expect(hazy.factors.find((factor) => factor.key === "clarity")!.stress).toBe(1);
   });
 
+  it("maps clear, midpoint and poor visibility to the documented clarity scale", () => {
+    const clarity = (visibilityM: number | undefined) => calculateComfort({ temperatureC: 22, relativeHumidity: 50, windSpeedMps: 1, visibilityM })
+      .factors.find((factor) => factor.key === "clarity")!;
+
+    expect(clarity(10_000)).toMatchObject({ stress: 0, deduction: 0 });
+    expect(clarity(6_000)).toMatchObject({ stress: 0.5, deduction: 5 });
+    expect(clarity(2_000)).toMatchObject({ stress: 1, deduction: 10 });
+  });
+
+  it("treats a missing visibility reading as clear rather than inventing stress", () => {
+    expect(calculateComfort({ temperatureC: 22, relativeHumidity: 50, windSpeedMps: 1 })
+      .factors.find((factor) => factor.key === "clarity")!.stress).toBe(0);
+  });
+
   it("uses temperature as a third input when dry air is otherwise identical", () => {
     const coolDry = calculateComfort({ temperatureC: 18, relativeHumidity: 20, windSpeedMps: 1 });
     const hotDry = calculateComfort({ temperatureC: 40, relativeHumidity: 20, windSpeedMps: 1 });
