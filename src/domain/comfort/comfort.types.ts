@@ -5,6 +5,8 @@ export interface ComfortInput {
   temperatureC: number;
   relativeHumidity: number;
   windSpeedMps: number;
+  /** Optional because older callers can safely use the clear-air default. */
+  visibilityM?: number | null;
 }
 
 export type ComfortClassification =
@@ -15,7 +17,7 @@ export type ComfortClassification =
   | "Very high environmental stress";
 
 export interface ComfortFactor {
-  key: "moisture" | "airflow";
+  key: "moisture" | "airflow" | "clarity";
   label: string;
   stress: number;
   weight: number;

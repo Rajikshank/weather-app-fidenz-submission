@@ -12,12 +12,12 @@ export function LoginPage() {
         <div className="login-copy">
           <p className="eyebrow">Twelve cities · one explainable index</p>
           <h1>See the climate<br />your eyes meet.</h1>
-          <p>Live temperature, humidity and airflow translated into a ranked 0–100 ocular environment score.</p>
+          <p>Live temperature, humidity, airflow and visibility translated into a ranked 0-100 ocular environment score.</p>
         </div>
         <div className="login-proof" aria-label="Product capabilities">
           <span><strong>12</strong> cities ranked</span>
           <span><strong>5m</strong> weather cache</span>
-          <span><strong>3</strong> live inputs</span>
+          <span><strong>4</strong> live inputs</span>
         </div>
       </section>
       <section className="login-access" aria-labelledby="access-title">

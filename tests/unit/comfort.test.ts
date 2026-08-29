@@ -1,3 +1,5 @@
+// These tests protect the scoring contract: bounded inputs, sensible trends,
+// explainable deductions and neutral environmental language.
 import { calculateComfort } from "../../src/domain/comfort/calculate-comfort";
 import { COMFORT_CONFIG } from "../../src/domain/comfort/comfort.config";
 
@@ -7,8 +9,8 @@ describe("baseline Ocular Comfort algorithm", () => {
 
     expect(result.score).toBeGreaterThanOrEqual(0);
     expect(result.score).toBeLessThanOrEqual(100);
-    expect(result.factors).toHaveLength(2);
-    expect(result.factors.map((factor) => factor.key)).toEqual(["moisture", "airflow"]);
+    expect(result.factors).toHaveLength(3);
+    expect(result.factors.map((factor) => factor.key)).toEqual(["moisture", "airflow", "clarity"]);
     expect(result.algorithmVersion).toBe("ocular-baseline");
   });
 
@@ -22,6 +24,13 @@ describe("baseline Ocular Comfort algorithm", () => {
     const calm = calculateComfort({ temperatureC: 22, relativeHumidity: 50, windSpeedMps: 1 });
     const windy = calculateComfort({ temperatureC: 22, relativeHumidity: 50, windSpeedMps: 9 });
     expect(windy.score).toBeLessThan(calm.score);
+  });
+
+  it("never rewards lower visibility under otherwise identical conditions", () => {
+    const clear = calculateComfort({ temperatureC: 22, relativeHumidity: 50, windSpeedMps: 1, visibilityM: 10000 });
+    const hazy = calculateComfort({ temperatureC: 22, relativeHumidity: 50, windSpeedMps: 1, visibilityM: 2000 });
+    expect(hazy.score).toBeLessThan(clear.score);
+    expect(hazy.factors.find((factor) => factor.key === "clarity")!.stress).toBe(1);
   });
 
   it("uses temperature as a third input when dry air is otherwise identical", () => {
@@ -61,7 +70,7 @@ describe("baseline Ocular Comfort algorithm", () => {
   it("uses normalized weights and keeps factor deductions explainable", () => {
     const result = calculateComfort({ temperatureC: 31, relativeHumidity: 34, windSpeedMps: 5 });
 
-    expect(COMFORT_CONFIG.weights.moisture + COMFORT_CONFIG.weights.airflow).toBe(1);
+    expect(Object.values(COMFORT_CONFIG.weights).reduce((sum, weight) => sum + weight, 0)).toBeCloseTo(1);
     for (const factor of result.factors) {
       expect(factor.stress).toBeGreaterThanOrEqual(0);
       expect(factor.stress).toBeLessThanOrEqual(1);
@@ -72,7 +81,7 @@ describe("baseline Ocular Comfort algorithm", () => {
   it.each([
     { temperatureC: Number.NaN, relativeHumidity: Number.NaN, windSpeedMps: Number.NaN },
     { temperatureC: -999, relativeHumidity: -20, windSpeedMps: -10 },
-    { temperatureC: 999, relativeHumidity: 400, windSpeedMps: 999 },
+    { temperatureC: 999, relativeHumidity: 400, windSpeedMps: 999, visibilityM: Number.NaN },
   ])("handles extreme or malformed numeric inputs without NaN", (input) => {
     const result = calculateComfort(input);
     expect(Number.isFinite(result.score)).toBe(true);

@@ -80,10 +80,13 @@ export class RankingService {
   }
 
   private scoreWeather(weather: WeatherSnapshot, cacheStatus: "HIT" | "MISS", cacheAgeSeconds: number): ScoredWeather {
+    // Keep scoring on the server and pass every normalized weather input into
+    // the pure calculator so the browser cannot alter ranked results.
     const comfort = calculateComfort({
       temperatureC: weather.temperatureC,
       relativeHumidity: weather.relativeHumidity,
       windSpeedMps: weather.windSpeedMps,
+      visibilityM: weather.visibilityM,
     });
     return { ...weather, ...comfort, cacheStatus, cacheAgeSeconds };
   }

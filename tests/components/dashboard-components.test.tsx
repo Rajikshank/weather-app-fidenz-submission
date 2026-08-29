@@ -30,8 +30,9 @@ const makeCity = (rank: number, cityName: string, score: number): RankedCity => 
   summary: "Dry air is the strongest environmental factor right now.",
   dewPointC: 12,
   factors: [
-    { key: "moisture", label: "Moisture balance", stress: 0.2, weight: 0.75, deduction: 15, severity: "low" },
-    { key: "airflow", label: "Airflow", stress: 0.1, weight: 0.25, deduction: 3, severity: "low" },
+    { key: "moisture", label: "Moisture balance", stress: 0.2, weight: 0.7, deduction: 14, severity: "low" },
+    { key: "airflow", label: "Airflow", stress: 0.1, weight: 0.2, deduction: 2, severity: "low" },
+    { key: "clarity", label: "Atmospheric clarity", stress: 0, weight: 0.1, deduction: 0, severity: "low" },
   ],
   algorithmVersion: "ocular-baseline",
   cacheStatus: "HIT",

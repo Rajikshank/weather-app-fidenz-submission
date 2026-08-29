@@ -1,3 +1,5 @@
+// The city catalog is product configuration, so these checks prevent duplicate
+// IDs, missing names and accidental loss of supplied records.
 import rawCities from "../../cities.json";
 import { cities } from "../../src/data/cities";
 

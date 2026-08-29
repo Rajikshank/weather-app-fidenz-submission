@@ -1,7 +1,7 @@
 import { Droplets, Thermometer, Wind } from "lucide-react";
 import type { ScoredWeather } from "../../shared/contracts";
 
-/** Shows the three weather inputs that actually participate in the current model. */
+/** Shows the primary readings in the dashboard; visibility is explained in the score breakdown. */
 export function MetricStrip({ city }: { city: ScoredWeather }) {
   const metrics = [
     { label: "Temperature", value: `${Math.round(city.temperatureC)}°C`, detail: `Feels ${Math.round(city.feelsLikeC)}°`, icon: Thermometer },

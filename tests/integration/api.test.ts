@@ -69,6 +69,12 @@ describe("weather analytics API", () => {
     expect(body.cities.map((city: { score: number }) => city.score)).toEqual([...body.cities].map((city: { score: number }) => city.score).sort((a: number, b: number) => b - a));
   });
 
+  it("passes provider visibility into the explainable clarity factor", async () => {
+    const service = new RankingService({ provider: new FixtureWeatherProvider(), cache: new MemoryTtlCache() });
+    const result = await service.getCity(cities.find((city) => city.CityName === "Colombo")!);
+    expect(result.factors.find((factor) => factor.key === "clarity")).toMatchObject({ stress: 0.125, label: "Atmospheric clarity" });
+  });
+
   it("reports MISS then HIT and expires raw weather after five minutes", async () => {
     let time = 0;
     const cache = new MemoryTtlCache(() => time);

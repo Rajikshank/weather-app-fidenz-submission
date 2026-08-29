@@ -16,13 +16,13 @@ export function FactorProfileChart({ factors }: { factors: ComfortFactor[] }) {
         responsive
         style={{ width: "100%", height: 128 }}
         title="Selected city environmental stress profile"
-        desc="Moisture and airflow stress are shown from zero to one hundred percent."
+        desc="Each environmental factor is shown from zero to one hundred percent stress."
       >
         <XAxis type="number" domain={[0, 100]} hide />
         <YAxis type="category" dataKey="label" width={110} axisLine={false} tickLine={false} tick={{ fill: "var(--foreground-muted)", fontSize: 11 }} />
         {/* Preserve a visible marker for an exact 0% result without changing its model value. */}
         <Bar dataKey="stressPercent" minPointSize={4} radius={[0, 7, 7, 0]} background={{ fill: "var(--chart-track)", radius: 7 }} isAnimationActive={!reducedMotion} animationDuration={600} animationEasing="ease-out">
-          {data.map((factor) => <Cell className={`factor-bar--${factor.key}`} key={factor.key} fill={factor.key === "moisture" ? "var(--stress-moisture)" : "var(--stress-airflow)"} />)}
+          {data.map((factor) => <Cell className={`factor-bar--${factor.key}`} key={factor.key} fill={factor.key === "moisture" ? "var(--stress-moisture)" : factor.key === "airflow" ? "var(--stress-airflow)" : "var(--primary)"} />)}
           <LabelList dataKey="stressPercent" position="right" formatter={(value: unknown) => `${String(value)}%`} fill="var(--foreground)" fontFamily="IBM Plex Mono" fontSize={10} />
         </Bar>
       </BarChart>

@@ -1,3 +1,5 @@
+// These checks make refresh persistence explicit and ensure demo mode cannot
+// be enabled by a typo or missing production setting.
 import { AUTH0_SESSION_CACHE, resolveAuthMode } from "../../src/client/auth/auth-config";
 
 describe("Auth0 session configuration", () => {

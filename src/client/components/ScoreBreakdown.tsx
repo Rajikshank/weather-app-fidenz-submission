@@ -1,4 +1,4 @@
-import { Droplets, Wind } from "lucide-react";
+import { Droplets, Haze, Wind } from "lucide-react";
 import type { ScoredWeather } from "../../shared/contracts";
 import { FactorProfileChart } from "./FactorProfileChart";
 
@@ -15,7 +15,7 @@ export function ScoreBreakdown({ city }: { city: ScoredWeather }) {
         <div><span>Ideal environmental baseline</span><strong>100</strong></div>
         {city.factors.map((factor) => (
           <div key={factor.key}>
-            <span>{factor.key === "moisture" ? <Droplets size={16} /> : <Wind size={16} />}{factor.label}</span>
+            <span>{factor.key === "moisture" ? <Droplets size={16} /> : factor.key === "clarity" ? <Haze size={16} /> : <Wind size={16} />}{factor.label}</span>
             <strong>−{factor.deduction}</strong>
           </div>
         ))}

@@ -27,9 +27,22 @@ const severity = (stress: number): ComfortFactor["severity"] =>
  * Formula changes therefore remain small and independently testable.
  */
 export function calculateComfort(input: ComfortInput): ComfortResult {
+  // Clamp provider values before using them so malformed weather cannot create
+  // NaN scores or push the public result outside its documented range.
   const temperatureC = clamp(input.temperatureC, -60, 60);
   const relativeHumidity = clamp(input.relativeHumidity, 0, 100);
   const windSpeedMps = clamp(input.windSpeedMps, 0, 75);
+
+  const visibilityM = clamp(
+    input.visibilityM ?? COMFORT_CONFIG.clarity.clearVisibilityM,
+    0,
+    COMFORT_CONFIG.clarity.clearVisibilityM,
+  );
+  // Visibility is a cautious atmospheric-clarity proxy, not a pollution claim.
+  const clarityStress = clamp(
+    (COMFORT_CONFIG.clarity.clearVisibilityM - visibilityM) /
+      (COMFORT_CONFIG.clarity.clearVisibilityM - COMFORT_CONFIG.clarity.poorVisibilityM),
+  );
 
   const humidityStress = clamp(
     (COMFORT_CONFIG.moisture.comfortableRh - relativeHumidity) /
@@ -44,6 +57,9 @@ export function calculateComfort(input: ComfortInput): ComfortResult {
     (windSpeedMps - COMFORT_CONFIG.airflow.calmMps) /
       (COMFORT_CONFIG.airflow.highMps - COMFORT_CONFIG.airflow.calmMps),
   );
+
+  // Each factor contributes a transparent deduction from the ideal score of 100.
+  const clarityDeduction = 100 * COMFORT_CONFIG.weights.clarity * clarityStress;
 
   const factors: ComfortFactor[] = [
     {
@@ -62,8 +78,19 @@ export function calculateComfort(input: ComfortInput): ComfortResult {
       deduction: Math.round(100 * COMFORT_CONFIG.weights.airflow * airflowStress),
       severity: severity(airflowStress),
     },
+
+    {
+      key: "clarity",
+      label: "Atmospheric clarity",
+      stress: clarityStress,
+      weight: COMFORT_CONFIG.weights.clarity,
+      deduction: Math.round(clarityDeduction),
+      severity: severity(clarityStress),
+    },
   ];
 
+  // Weighted stress is converted back into comfort. Higher environmental stress
+  // therefore always means a lower score.
   const environmentalStress = factors.reduce((sum, factor) => sum + factor.stress * factor.weight, 0);
   const score = Math.round(100 * (1 - clamp(environmentalStress)));
   const dominant = factors.reduce((current, factor) =>
@@ -77,7 +104,9 @@ export function calculateComfort(input: ComfortInput): ComfortResult {
     summary:
       dominant.key === "moisture"
         ? "Dry air is the strongest environmental factor right now."
-        : "Moving air is the strongest environmental factor right now.",
+        : dominant.key === "clarity"
+          ? "Limited visibility is the strongest environmental factor right now."
+          : "Moving air is the strongest environmental factor right now.",
     dewPointC: Number(calculateDewPoint(temperatureC, relativeHumidity).toFixed(1)),
     factors,
     algorithmVersion: ALGORITHM_ID,

@@ -16,7 +16,7 @@ export function CityComparisonChart({ cities, selectedId }: { cities: RankedCity
           <p className="eyebrow">Cross-city signal</p>
           <h2 id="comparison-title">Comfort landscape</h2>
         </div>
-        <span className="scale-label">0–100 index</span>
+        <span className="scale-label">0-100 index</span>
       </div>
       <p className="section-description">A common scale makes the current ranking and outliers immediately visible.</p>
       <div className="comparison-chart">

@@ -1,6 +1,8 @@
 # OcuComfort: Ocular Environmental Comfort Index
 
-OcuComfort translates live weather conditions into an explainable measure of how favourable the outdoor environment may feel to the ocular surface. It combines temperature, relative humidity, and wind speed into a score from 0 to 100, then ranks twelve cities from most to least comfortable.
+OcuComfort is a weather-based ocular comfort index. It helps people notice outdoor conditions that may contribute to dryness, especially low humidity, moving air and reduced atmospheric clarity. The app turns those signals into an explainable score from 0 to 100 and ranks twelve cities from most to least comfortable.
+
+It is intended for environmental awareness and planning. It cannot prevent, diagnose or treat dry-eye damage, and it is not a medical recommendation.
 
 [Open the live application](https://ocucomfort.krishnakumarr.workers.dev)
 
@@ -44,6 +46,7 @@ Scores are calculated by the backend. The browser receives normalized weather ob
 - **Relative humidity** is the primary moisture signal.
 - **Temperature** slightly amplifies moisture stress when the air is already dry and warm.
 - **Wind speed** provides a separate airflow stress.
+- **Visibility** provides a low-weight atmospheric clarity signal.
 - **Dew point** is derived for context but does not receive an additional score weight.
 
 Inputs and intermediate stress values are clamped to safe numeric ranges. Each stress value is normalized from `0` to `1`.
@@ -59,9 +62,14 @@ MoistureStress = clamp(
 
 AirflowStress = clamp((WindSpeedMps - 1) / (8 - 1))
 
+ClarityStress = clamp(
+  (10000 - VisibilityM) / (10000 - 2000)
+)
+
 EnvironmentalStress =
-    0.75 × MoistureStress
-  + 0.25 × AirflowStress
+    0.70 × MoistureStress
+  + 0.20 × AirflowStress
+  + 0.10 × ClarityStress
 
 OcularComfort =
   clamp(round(100 × (1 - EnvironmentalStress)), 0, 100)
@@ -69,9 +77,9 @@ OcularComfort =
 
 ### Why moisture receives more weight
 
-Controlled studies consistently associate lower relative humidity with increased tear evaporation. Controlled airflow can also increase evaporation and dryness symptoms, but the broader evidence is less consistent. Moisture therefore contributes 75% of the composite stress and airflow contributes 25%.
+Controlled studies consistently associate lower relative humidity with increased tear evaporation. Controlled airflow can also increase evaporation and dryness symptoms, but the broader evidence is less consistent. Moisture therefore contributes 70% of the composite stress and airflow contributes 20%. Visibility receives 10% as a cautious atmospheric-clarity proxy rather than a direct pollution or health measurement.
 
-The weights and normalization anchors are transparent engineering decisions. They are not published medical thresholds. Temperature remains a small modifier so that warm, dry air is represented without overpowering the humidity signal.
+The weights and normalization anchors are transparent engineering decisions. They are not published medical thresholds. Temperature remains a small modifier so that warm, dry air is represented without overpowering the humidity signal. Visibility is treated as an experimental signal and is deliberately kept low-weight.
 
 | Score | Interpretation |
 |---:|---|
@@ -113,19 +121,19 @@ Raw OpenWeather responses are cached for exactly 300 seconds using keys such as 
 
 Processed results are recalculated after a raw-cache read because the comfort calculation is pure and inexpensive. This avoids a second invalidation path. The cache is regional to a Cloudflare data centre, so the first request from another region can still be a MISS.
 
-### Resilience and performance
+### Failure handling and performance
 
 Upstream work is limited to five simultaneous requests. Failed cities are returned as metadata while successful cities remain available and correctly ranked. Concurrent cold requests for the same city share one in-flight provider promise, preventing request bursts from multiplying OpenWeather calls.
 
 Live data mode fails closed when the OpenWeather key is missing; it never substitutes fixture observations. Deterministic fixtures are available only when demo mode is selected explicitly.
 
-### Authentication
+### Sign-in and security
 
 The frontend uses Auth0 Authorization Code with PKCE. Protected Worker routes independently verify the access-token signature, issuer, audience, and expiry through Auth0 JWKS.
 
-The Auth0 tenant must provide the allowed callback, logout, and web origins. Public database signup should be disabled, approved users should be created manually, and MFA policy is managed in Auth0 rather than application code.
+The Auth0 tenant must provide the allowed callback, logout, and web origins. Public signup should be disabled, approved users should be created manually, and MFA policy is managed in Auth0 rather than application code.
 
-Sessions are stored through the Auth0 SDK's local-storage option so a normal refresh does not return an authenticated user to the sign-in screen. This improves continuity but carries the standard local-storage XSS trade-off, so the application loads no third-party runtime scripts.
+Sessions are stored through the Auth0 SDK's local-storage option so a normal refresh does not return an authenticated user to the sign-in screen. This improves continuity but carries the standard local-storage XSS trade-off. The app does not inject third-party runtime scripts into the page.
 
 ## Technology
 
@@ -149,7 +157,7 @@ Sessions are stored through the Auth0 SDK's local-storage option so a normal ref
 Install dependencies:
 
 ```bash
-npm install
+npm ci
 ```
 
 Copy `.env.example` to `.env`, then configure either deterministic demo mode or live mode.
@@ -232,7 +240,8 @@ Production mode is fixed to `DATA_MODE=live` and `AUTH_MODE=auth0` in `wrangler.
 
 - The score is evidence-informed but has not been clinically validated.
 - Outdoor station readings cannot represent indoor conditions or personal exposure.
-- Moisture and airflow are simplified into smooth engineering normalizations.
+- Moisture, airflow and visibility are simplified into smooth engineering normalizations.
+- Visibility is only an atmospheric-clarity proxy; it does not measure particulate pollution.
 - Cloudflare cache entries are regional rather than globally replicated.
 - Processed results are not cached separately because calculation is inexpensive.
 - Auth0 signup and MFA policies require manual tenant configuration.

@@ -1,3 +1,5 @@
+// Both cache adapters share one contract. These tests keep local behaviour
+// representative of the Cloudflare Workers cache.
 import { MemoryTtlCache, WorkersCache } from "../../src/worker/cache/cache";
 
 describe("cache adapters", () => {

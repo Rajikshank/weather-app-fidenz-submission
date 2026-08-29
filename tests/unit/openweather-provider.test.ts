@@ -1,3 +1,5 @@
+// These tests verify the provider boundary: request parameters, safe errors,
+// coordinate lookups and conversion into the app's weather shape.
 import { OpenWeatherProvider } from "../../src/worker/providers/weather-provider";
 
 describe("OpenWeather boundary", () => {

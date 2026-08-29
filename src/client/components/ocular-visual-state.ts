@@ -7,7 +7,7 @@ export interface OcularVisualState {
   tintOpacity: number;
 }
 
-/** Maps the public 0–100 score to restrained visualization roles. Terracotta
+/** Maps the public 0-100 score to restrained visualization roles. Terracotta
  * is intentionally used instead of clinical red so low comfort cannot be read
  * as a predicted injury or diagnosis. */
 export function getOcularVisualState(score: number): OcularVisualState {

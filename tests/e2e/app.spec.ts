@@ -1,6 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+// These browser checks cover the protected user journey, responsive controls,
+// charts, loading states, location fallback, and the main accessibility risks.
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: /continue with auth0/i }).click();
@@ -12,6 +14,7 @@ test("user can inspect rankings, charts and score logic", async ({ page }) => {
   await page.getByRole("button", { name: /Dubai/ }).click();
   await expect(page.getByRole("heading", { name: "Dubai" })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Why \d+/ })).toBeVisible();
+  await expect(page.getByText("Atmospheric clarity")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Comfort landscape" })).toBeVisible();
   await expect(page.getByRole("button", { name: /Methodology/ })).toHaveCount(0);
 });
