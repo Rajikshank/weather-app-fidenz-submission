@@ -50,6 +50,7 @@ Scores are calculated by the backend. The browser receives normalized weather ob
 - **Dew point** is derived for context but does not receive an additional score weight.
 
 Inputs and intermediate stress values are clamped to safe numeric ranges. Each stress value is normalized from `0` to `1`.
+The dashboard shows the raw visibility distance beside `Visibility stress`. A `0%` stress value means OpenWeather reported clear-range visibility, usually `10 km` or more.
 
 ```text
 HumidityStress = clamp((55 - RelativeHumidity) / (55 - 20))

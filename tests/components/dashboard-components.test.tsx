@@ -5,6 +5,7 @@ import type { RankedCity } from "../../src/shared/contracts";
 import { CityRanking } from "../../src/client/components/CityRanking";
 import { CityComparisonChart } from "../../src/client/components/CityComparisonChart";
 import { FactorProfileChart } from "../../src/client/components/FactorProfileChart";
+import { MetricStrip } from "../../src/client/components/MetricStrip";
 import { OcularPulse } from "../../src/client/components/OcularPulse";
 import { getOcularVisualState } from "../../src/client/components/ocular-visual-state";
 import { OcuLoader } from "../../src/client/components/OcuLoader";
@@ -32,7 +33,7 @@ const makeCity = (rank: number, cityName: string, score: number): RankedCity => 
   factors: [
     { key: "moisture", label: "Moisture balance", stress: 0.2, weight: 0.7, deduction: 14, severity: "low" },
     { key: "airflow", label: "Airflow", stress: 0.1, weight: 0.2, deduction: 2, severity: "low" },
-    { key: "clarity", label: "Atmospheric clarity", stress: 0, weight: 0.1, deduction: 0, severity: "low" },
+    { key: "clarity", label: "Visibility stress", stress: 0, weight: 0.1, deduction: 0, severity: "low" },
   ],
   algorithmVersion: "ocular-baseline",
   cacheStatus: "HIT",
@@ -90,6 +91,13 @@ describe("dashboard components", () => {
     expect(screen.getByRole("heading", { name: "Comfort landscape" })).toBeInTheDocument();
     expect(screen.getByLabelText("Environmental stress profile")).toBeInTheDocument();
     expect(container.querySelectorAll(".recharts-wrapper").length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("shows the raw visibility behind the clarity calculation", () => {
+    render(<MetricStrip city={makeCity(1, "Paris", 92)} />);
+    expect(screen.getByText("Visibility")).toBeInTheDocument();
+    expect(screen.getByText("10+ km")).toBeInTheDocument();
+    expect(screen.getByText("Clear-range visibility")).toBeInTheDocument();
   });
 
   it("announces the proprietary loading state", () => {

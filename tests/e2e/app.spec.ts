@@ -14,7 +14,8 @@ test("user can inspect rankings, charts and score logic", async ({ page }) => {
   await page.getByRole("button", { name: /Dubai/ }).click();
   await expect(page.getByRole("heading", { name: "Dubai" })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Why \d+/ })).toBeVisible();
-  await expect(page.getByText("Atmospheric clarity")).toBeVisible();
+  await expect(page.locator(".factor-chart").getByText("Visibility stress")).toBeVisible();
+  await expect(page.getByText("Visibility", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Comfort landscape" })).toBeVisible();
   await expect(page.getByRole("button", { name: /Methodology/ })).toHaveCount(0);
 });
@@ -90,6 +91,12 @@ test("zero moisture stress still has a visible chart marker and value", async ({
   await expect(moistureBar).toBeVisible();
   const bounds = await moistureBar.boundingBox();
   expect(bounds?.width ?? 0).toBeGreaterThanOrEqual(3);
+});
+
+test("reduced visibility produces a nonzero visibility stress", async ({ page }) => {
+  await page.getByRole("button", { name: /Liverpool/ }).click();
+  await expect(page.locator(".factor-chart").getByText("Visibility stress")).toBeVisible();
+  await expect(page.locator(".factor-chart")).toContainText("25%");
 });
 
 test("user can opt into an unranked nearby observation", async ({ page, context }) => {

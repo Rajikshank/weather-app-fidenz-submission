@@ -72,7 +72,7 @@ describe("weather analytics API", () => {
   it("passes provider visibility into the explainable clarity factor", async () => {
     const service = new RankingService({ provider: new FixtureWeatherProvider(), cache: new MemoryTtlCache() });
     const result = await service.getCity(cities.find((city) => city.CityName === "Colombo")!);
-    expect(result.factors.find((factor) => factor.key === "clarity")).toMatchObject({ stress: 0.125, label: "Atmospheric clarity" });
+    expect(result.factors.find((factor) => factor.key === "clarity")).toMatchObject({ stress: 0.125, label: "Visibility stress" });
   });
 
   it("reports MISS then HIT and expires raw weather after five minutes", async () => {

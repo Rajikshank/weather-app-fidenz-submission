@@ -81,7 +81,8 @@ export function calculateComfort(input: ComfortInput): ComfortResult {
 
     {
       key: "clarity",
-      label: "Atmospheric clarity",
+      // The factor is expressed as stress, so 0% means clear-range visibility.
+      label: "Visibility stress",
       stress: clarityStress,
       weight: COMFORT_CONFIG.weights.clarity,
       deduction: Math.round(clarityDeduction),
